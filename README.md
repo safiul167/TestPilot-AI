@@ -44,6 +44,19 @@ HAS_DECISION, SELECTS, HAS_RUN, FOR_TEST, SUSPECTS
 FalkorDB is essential for retrieving test dependencies,
 risk coverage, and persistent decision history.
 
+## Technical Documentation
+
+- [Graph architecture and data model](docs/graph_model.md)
+- [FalkorDB Cypher queries](docs/queries.cypher)
+
+The graph stores test coverage, prerequisite
+dependencies, persistent validation history,
+and agent decisions.
+
+The application uses these relationships to
+select and replan synthetic ECU tests.
+
+
 ## Installation
 
 Requirements:
