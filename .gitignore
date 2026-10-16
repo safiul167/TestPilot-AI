@@ -1,0 +1,30 @@
+
+# Python environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor and temporary files
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# Local databases and generated files
+data/local/
+reports/
+*.rdb
+appendonlydir/
+
+# OS files
+.DS_Store
+Thumbs.db

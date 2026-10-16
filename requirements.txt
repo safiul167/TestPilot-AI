@@ -1,0 +1,4 @@
+
+falkordb
+streamlit
+pytest
