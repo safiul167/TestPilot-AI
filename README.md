@@ -44,6 +44,25 @@ HAS_DECISION, SELECTS, HAS_RUN, FOR_TEST, SUSPECTS
 FalkorDB is essential for retrieving test dependencies,
 risk coverage, and persistent decision history.
 
+## Enhanced Interactive Dashboard
+
+The Streamlit application provides:
+
+- Mission Control with ECU validation status
+- One-click execution of all eligible synthetic tests
+- Interactive engineering evidence-path visualization
+- Graph What-If Lab for non-destructive evidence ablation
+- Persistent session history and JSON evidence export
+- 60-minute constrained and 120-minute full-test scenarios
+
+The What-If Lab temporarily excludes one FalkorDB-derived
+DETECTS relationship in memory and recalculates test
+priorities. It does not modify the stored graph.
+
+All outcomes are synthetic. The application does not
+operate physical ECU test equipment.
+
+
 ## Technical Documentation
 
 - [Graph architecture and data model](docs/graph_model.md)
@@ -64,29 +83,47 @@ Requirements:
 - Docker Desktop
 - Git
 
+Clone the repository:
+
+```powershell
+git clone https://github.com/safiul167/TestPilot-AI.git
+cd TestPilot-AI
+```
+
 Start FalkorDB:
 
-    docker compose up -d
+```powershell
+docker compose up -d
+```
 
-Create Python environment:
+Create and install the Python environment:
 
-    py -3.12 -m venv .venv
-    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-Initialize the graph on a fresh database:
+Initialize the graph on a fresh database only:
 
-    .\.venv\Scripts\python.exe src\seed_graph.py
-    .\.venv\Scripts\python.exe src\seed_validation_data.py
+```powershell
+.\.venv\Scripts\python.exe src\seed_graph.py
+.\.venv\Scripts\python.exe src\seed_validation_data.py
+```
 
-Run tests:
+Run automated tests:
 
-    .\.venv\Scripts\python.exe -m pytest tests/test_agent.py -v
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_agent.py -v
+```
 
-Launch dashboard:
+Launch the application:
 
-    .\.venv\Scripts\python.exe -m streamlit run app.py
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run app.py
+```
 
 Open http://localhost:8501
+
 
 ## Demo
 Create a new session with a 60-minute budget.

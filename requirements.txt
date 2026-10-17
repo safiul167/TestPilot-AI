@@ -2,3 +2,4 @@
 falkordb
 streamlit
 pytest
+graphviz
