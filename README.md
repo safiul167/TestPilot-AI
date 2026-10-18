@@ -94,7 +94,26 @@ See [graph architecture and detailed model](docs/graph_model.md) and [Cypher que
 For each eligible test, the planner uses a transparent score:
 
 \[
-\text{Priority} = \frac{\sum_f \left(\text{risk}_f \times \text{detection_probability}_{t,f} \times \text{concern_multiplier}_f\right)}{\text{duration}_t}
+\text{Priority}(t) =
+\frac{
+\sum_{f \in F_t}
+\left(R_f \times P_{t,f} \times M_f\right)
+}{
+D_t
+}
+\]
+
+Where:
+- \(R_f\) = Risk weight of failure mode \(f\).
+- \(P_{t,f}\) = Detection probability for test \(t\) and failure \(f\).
+- \(M_f\) = Concern multiplier (2.0 if suspected; otherwise 1.0).
+- \(D_t\) = Test execution duration in minutes.
+- \(F_t\) = Failure modes connected to test \(t\).
+2. Add a worked example
+For TEST-002 (Power Rail Monitoring), your synthetic dataset contains:
+\[
+\text{Priority}=\frac{8(0.50)+9(0.95)}{8}
+=\boxed{1.569}
 \]
 
 The synthetic concern multiplier is **2.0** when a failure mode was previously suspected in the session, and **1.0** otherwise. This is a **greedy demonstration heuristic**, not a calibrated safety-risk metric or a globally optimal schedule.
