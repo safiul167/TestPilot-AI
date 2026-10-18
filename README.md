@@ -93,13 +93,57 @@ flowchart LR
 
 Additional information: [graph architecture and detailed model](docs/graph_model.md), [Cypher queries](docs/queries.cypher), and the parameterized queries in [`src/run_agent.py`](src/run_agent.py).
 
+### Core Cypher queries used by the agent
+
+These examples correspond to the **actual data model and queries** in [`src/run_agent.py`](src/run_agent.py). The Python client supplies `$sid` as a parameter. In the FalkorDB Browser, run each query separately and substitute an existing session ID for `$sid` if you are not passing parameters.
+
+**1. Multi-hop engineering evidence — risk coverage and requirements**
+
+```cypher
+MATCH (t:Test)-[d:DETECTS]->(f:FailureMode)-[:AFFECTS]->(r:Requirement)
+RETURN t.id, t.name, t.duration_min,
+       f.id, f.risk_weight, d.detection_probability, r.id
+```
+
+**2. Graph-based test prerequisites**
+
+```cypher
+MATCH (t:Test)-[:REQUIRES]->(p:Test)
+RETURN t.id AS test_id, p.id AS prerequisite_id
+```
+
+**3. Load persistent session results**
+
+```cypher
+MATCH (s:Session {id:$sid})-[:HAS_RUN]->(run:TestRun)-[:FOR_TEST]->(t:Test)
+RETURN t.id, run.outcome
+```
+
+**4. Load suspected failure modes from previous executions**
+
+```cypher
+MATCH (s:Session {id:$sid})-[:HAS_RUN]->(run:TestRun)-[:SUSPECTS]->(f:FailureMode)
+RETURN DISTINCT f.id
+```
+
+**5. Retrieve remaining session budget**
+
+```cypher
+MATCH (s:Session {id:$sid})
+RETURN s.remaining_minutes
+```
+
+Agent decisions and test-run outcomes are written with parameterized `MERGE` and `SET` statements, as shown in [`src/run_agent.py`](src/run_agent.py). Additional runnable read-only query examples are available in [`docs/queries.cypher`](docs/queries.cypher).
+
 ## Test selection and automatic replanning
 
-For each **eligible** test, the agent uses this synthetic *risk-coverage benefit per minute*:
+For each **eligible** test, the agent calculates a synthetic *risk-coverage benefit per minute* using this formula (shown in plain text for reliable GitHub rendering):
 
-$$
-\operatorname{Priority}(t) = \frac{\sum_{f \in F_t} R_f \cdot P_{t,f} \cdot M_f}{D_t}
-$$
+```text
+Priority(test) =
+    SUM(risk_weight[f] * detection_probability[test,f] * concern_multiplier[f])
+    / duration_minutes[test]
+```
 
 **Plain-text equivalent:** `Priority(test) = SUM(risk_weight × detection_probability × concern_multiplier) / test_duration_minutes`
 
@@ -126,11 +170,12 @@ TEST-002 has two synthetic coverage relationships:
 
 With a duration of 8 minutes:
 
-$$
-\operatorname{Priority}(\mathrm{TEST\text{-}002}) = \frac{8(0.50) + 9(0.95)}{8} = 1.56875 \approx 1.569
-$$
-
-**Plain-text calculation:** `(8 × 0.50 + 9 × 0.95) / 8 = 1.56875 ≈ 1.569`
+```text
+TEST-002 priority = (8 * 0.50 + 9 * 0.95) / 8
+                  = (4.00 + 8.55) / 8
+                  = 1.56875
+                  = 1.569 (rounded to 3 decimal places)
+```
 
 This is a **greedy demonstration heuristic**, not a calibrated automotive safety-risk metric, a validated detection probability model, or a globally optimal schedule.
 
