@@ -13,7 +13,7 @@ TestPilot AI is a working, deterministic agent prototype that uses **FalkorDB as
 | Hackathon | Graph Hacks 2026 — WeMakeDevs × FalkorDB |
 | Primary track | **Agents That Act on Connected Data** |
 | Repository | [github.com/safiul167/TestPilot-AI](https://github.com/safiul167/TestPilot-AI) |
-| Demo video | **Pending upload — replace with a public or unlisted video URL before submission** |
+| Demo video | **[https://youtu.be/9J_jN5zgk5g** |
 | Deployment | **Local setup using Docker Compose and Streamlit**, documented below |
 | AI assistance | Disclosed in [AI assistance disclosure](#ai-assistance-disclosure) |
 
